@@ -1,0 +1,39 @@
+DEMO SCRIPT FOR VIVA/PRESENTATION
+
+("Introduction")
+"Good morning. My project is a 'Netflix-Inspired Video Streaming Platform'. The goal was to build a full-stack application that mimics the core functionality of a modern streaming service, focusing on dynamic content loading, user authentication, and content management."
+
+("Tech Stack")
+"I built this using the MERN stack (minus MongoDB, using SQLite for academic simplicity) + Vite for a fast frontend experience.
+- Backend: Node.js & Express
+- Database: SQLite (Structured with Users, Movies, Categories, Watchlist tables)
+- Frontend: React (Vite) with Axios for API communication."
+
+("The Flow - Show Home Page")
+"Here is the Landing Page.
+- The Hero Banner dynamically loads a featured movie from the database.
+- Below, we have categorized rows (Trending, Action, Comedy).
+- All these posters and titles are fetched from my backend API."
+
+("Login/Auth")
+"Users can Sign Up and Login. We use JWT (JSON Web Tokens) for maintaining the user session."
+
+("Play Video")
+"If I click 'Play' on the Hero banner or any movie card, it takes me to the Player Page.
+- This fetches the specific video URL from the database.
+- It supports standard MP4 links."
+
+("My List")
+"I can also build a personal watchlist.
+- Clicking 'My List' adds this movie to my saved collection.
+- Navigating to the 'My List' page shows my saved movies.
+- I can toggle this to remove movies as well."
+
+("Admin Panel - The 'Wow' Factor")
+"Finally, to make this a real dynamic platform, I built an Admin Panel.
+- Here, I can add new movies by providing details and URLs.
+- I can also delete content.
+- Changes here reflect immediately on the Home Page, proving that nothing is hardcoded."
+
+("Conclusion")
+"In summary, this project demonstrates a complete cycle: Database storage -> Backend API -> Frontend UI, wrapped in a responsive design."

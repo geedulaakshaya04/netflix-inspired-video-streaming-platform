@@ -1,0 +1,5 @@
+Day 1 – Cleanup & setup ✔
+Day 2 – Backend APIs
+Day 3 – Database finalization (Fix missing categories table)
+Day 4 – Frontend-backend integration
+Day 5 – Polish & Demo Prep

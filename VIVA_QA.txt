@@ -1,0 +1,30 @@
+VIVA QUESTIONS & ANSWERS (MEMORIZE THESE)
+
+Q1: Why did you choose this project?
+A: "To gain hands-on experience in full-stack web development and understand how streaming platforms work architecturally."
+
+Q2: Is this a real Netflix clone?
+A: "No. It is a 'Netflix-inspired' academic project built to demonstrate full-stack architecture and functionality, not to replace the actual service."
+
+Q3: How is video streaming implemented?
+A: "I use standard HTML5 video playback with URLs stored in the database. For a real-world scale, we would use chunking/HLS, but for this project, direct file links simulate the experience."
+
+Q4: What is your role in the project?
+A: "I worked on [Your Role, e.g., integrating the Frontend with Backend APIs and setting up the Database]."
+
+Q5: How can this project be improved?
+A: "By adding a recommendation engine (Machine Learning), moving media to Cloud Storage (AWS S3), and implementing OAuth for social login."
+
+Q6: What challenges did you face?
+A: "Managing the state between the Frontend and Backend, specifically handling asynchronous API calls and ensuring the database schema matched the UI requirements."
+
+Q7: Which database did you use and why?
+A: "I used SQLite because it is serverless, lightweight, and perfect for development and academic projects without needing complex setup."
+
+---
+DEMO ORDER (If asked to show the app):
+1. Open Home Page.
+2. Click on a Movie -> Show Details.
+3. Click Play -> Show Video.
+4. Click 'My List' -> Show functionality.
+5. Go to Admin Panel -> Add a test movie -> Delete it.

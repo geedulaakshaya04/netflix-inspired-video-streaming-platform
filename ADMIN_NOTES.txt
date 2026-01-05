@@ -1,0 +1,15 @@
+ADMIN PANEL EXPLANATION NOTES
+
+1. **Purpose**: The Admin Panel allows platform administrators to manage the movie catalog dynamically without touching the database directly.
+   
+2. **Key APIs Used**:
+   - `POST /api/admin/movies`: Handles multipart form data for uploading posters/videos or saving external URLs.
+   - `DELETE /api/admin/movies/:id`: Removes a movie from the `movies` table.
+   - `GET /api/movies`: Fetches the current list to display in the management view.
+
+3. **Frontend Implementation**:
+   - Built with React state to handle form inputs.
+   - Uses a unified `addMovie` service function that wraps `axios` and `FormData` for correct header handling.
+   - Includes immediate visual feedback (success alerts, list refresh) to improve User Experience (UX).
+
+4. **Security Note**: In a production environment, these routes would be protected by JWT Role-Based Access Control (RBAC). For this academic project, we use a dedicated route (`/admin`) and simplified access.

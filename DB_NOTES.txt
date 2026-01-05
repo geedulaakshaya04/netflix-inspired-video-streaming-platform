@@ -1,0 +1,18 @@
+DATABASE EXPLANATION NOTES
+
+1. **Database System**: SQLite
+   - We use SQLite because it is serverless, lightweight, and perfect for academic projects.
+   - It is connected via `database.js` ensuring a single source of truth for the connection.
+
+2. **Schema Structure**:
+   - **Users**: Stores user credentials (`email`, `password`) and role (`user` vs `admin`).
+   - **Movies**: The core table. Stores `title`, `description`, `category`, `poster` URL, and `video_url`.
+   - **Categories**: Normalized table to store unique category names (e.g., Action, Comedy).
+   - **Watchlist**: Links users to movies they want to watch later (Many-to-Many relationship).
+
+3. **Data Management**:
+   - **Seeding**: We use a `seed.js` script to populate the database with initial demonstration data (12 high-quality movies).
+   - **Dynamic**: The frontend fetches this data via REST APIs (`/api/movies`), ensuring the app is not hardcoded.
+
+4. **Scalability**:
+   - The schema design (separate tables, foreign keys) allows for easy expansion (e.g., adding Reviews or Actors tables later).
