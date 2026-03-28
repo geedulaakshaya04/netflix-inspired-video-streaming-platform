@@ -2,44 +2,47 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../database');
-
-const JWT_SECRET = 'supersecretkeydev'; // In prod use env var
+const User = require('../models/User');
 
 // Signup
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-    const hash = bcrypt.hashSync(password, 10);
+    try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ error: 'Email already exists' });
 
-    const stmt = db.prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)');
-    stmt.run(name, email, hash, function (err) {
-        if (err) {
-            if (err.message && err.message.includes('UNIQUE constraint failed')) {
-                return res.status(400).json({ error: 'Email already exists' });
-            }
-            return res.status(500).json({ error: 'Database error: ' + err.message });
-        }
-        res.status(201).json({ message: 'User created successfully', userId: this.lastID });
-    });
-    stmt.finalize();
+        const hash = bcrypt.hashSync(password, 10);
+        const user = await User.create({ name, email, password_hash: hash });
+
+        res.status(201).json({ message: 'User created successfully', userId: user._id });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error: ' + err.message });
+    }
 });
 
 // Login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
+    try {
+        const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ error: 'Invalid email or password' });
 
         if (!bcrypt.compareSync(password, user.password_hash)) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
-        const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
-    });
+        const token = jwt.sign(
+            { id: user._id, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error: ' + err.message });
+    }
 });
 
 module.exports = router;

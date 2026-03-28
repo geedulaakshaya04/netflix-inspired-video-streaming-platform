@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Row from '../components/Row';
 import { getMovies } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const Home = () => {
     const [movie, setMovie] = useState([]);
@@ -33,7 +34,7 @@ const Home = () => {
 
     // Fallback image if no movie path
     const bannerImage = movie?.poster
-        ? (movie.poster.startsWith('http') ? movie.poster : `http://localhost:5000${movie.poster}`)
+        ? (movie.poster.startsWith('http') ? movie.poster : `${API_BASE_URL}${movie.poster}`)
         : "https://assets.nflxext.com/ffe/siteui/vlv3/f85718e2-fc6d-4954-9ca0-f6daecc19832/web/IN-en-20240902-TRIFECTA-perspective_2276532d-6e42-4f0e-b2d9-31778ff05e04_large.jpg";
 
     return (

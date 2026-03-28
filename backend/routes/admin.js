@@ -1,55 +1,97 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database');
+const Movie = require('../models/Movie');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Configure Multer
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
+// Cloudinary Storage for images (posters)
+const imageStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'netflix-clone/posters',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
 });
 
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 500 * 1024 * 1024 } // 500MB limit
+// Cloudinary Storage for videos
+const videoStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'netflix-clone/videos',
+        resource_type: 'video',
+        allowed_formats: ['mp4', 'mov', 'avi', 'mkv'],
+    },
 });
+
+const uploadPoster = multer({ storage: imageStorage });
+const uploadVideo = multer({ storage: videoStorage });
+
+// Combined upload using separate middleware calls chained
+const uploadFields = (req, res, next) => {
+    // Use memory upload to handle mixed files, then push each to cloudinary
+    multer({
+        storage: new CloudinaryStorage({
+            cloudinary,
+            params: (req, file) => {
+                if (file.fieldname === 'poster') {
+                    return { folder: 'netflix-clone/posters', allowed_formats: ['jpg', 'jpeg', 'png', 'webp'] };
+                }
+                return { folder: 'netflix-clone/videos', resource_type: 'video', allowed_formats: ['mp4', 'mov', 'avi', 'mkv'] };
+            },
+        }),
+        limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+    }).fields([
+        { name: 'poster', maxCount: 1 },
+        { name: 'video', maxCount: 1 },
+    ])(req, res, next);
+};
 
 // ADMIN: Add Movie
-router.post('/movies', upload.fields([{ name: 'poster', maxCount: 1 }, { name: 'video', maxCount: 1 }]), (req, res) => {
+router.post('/movies', uploadFields, async (req, res) => {
     const { title, description, category, release_year, rating, video_url, poster } = req.body;
 
-    // Handle file uploads or fallback to string URLs
-    let final_poster = req.files && req.files['poster'] ? `/uploads/${req.files['poster'][0].filename}` : poster;
-    let final_video = req.files && req.files['video'] ? `/uploads/${req.files['video'][0].filename}` : video_url;
+    // Use Cloudinary uploaded URLs or fallback to string URLs provided in body
+    const final_poster = req.files && req.files['poster']
+        ? req.files['poster'][0].path
+        : poster;
+    const final_video = req.files && req.files['video']
+        ? req.files['video'][0].path
+        : video_url;
 
     if (!title) return res.status(400).json({ error: 'Title is required' });
 
-    const stmt = db.prepare('INSERT INTO movies (title, description, category, release_year, rating, poster, video_url) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    stmt.run(title, description, category, release_year, rating, final_poster, final_video, function (err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ id: this.lastID, message: 'Movie added successfully' });
-    });
-    stmt.finalize();
+    try {
+        const movie = await Movie.create({
+            title,
+            description,
+            category,
+            release_year,
+            rating,
+            poster: final_poster,
+            video_url: final_video,
+        });
+        res.status(201).json({ id: movie._id, message: 'Movie added successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // ADMIN: Delete Movie
-router.delete('/movies/:id', (req, res) => {
-    db.run('DELETE FROM movies WHERE id = ?', [req.params.id], function (err) {
-        if (err) return res.status(500).json({ error: err.message });
+router.delete('/movies/:id', async (req, res) => {
+    try {
+        await Movie.findByIdAndDelete(req.params.id);
         res.json({ message: 'Movie deleted' });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 module.exports = router;

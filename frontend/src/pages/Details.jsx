@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieById, addToWatchlist, removeFromWatchlist, getWatchlist } from '../services/api';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 
 const Details = () => {
     const { id } = useParams();
@@ -37,7 +38,7 @@ const Details = () => {
 
     if (!movie) return <div style={{ color: 'white', padding: 100, backgroundColor: '#111', height: '100vh' }}>Loading...</div>;
 
-    const backgroundUrl = movie.poster && movie.poster.startsWith('http') ? movie.poster : `http://localhost:5000${movie.poster}`;
+    const backgroundUrl = movie.poster && movie.poster.startsWith('http') ? movie.poster : `${API_BASE_URL}${movie.poster}`;
 
     return (
         <div style={{ backgroundColor: '#111', minHeight: '100vh', color: 'white' }}>

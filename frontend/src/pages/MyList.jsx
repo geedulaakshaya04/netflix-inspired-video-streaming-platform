@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { getWatchlist } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const MyList = () => {
     const [movies, setMovies] = useState([]);
@@ -34,7 +35,7 @@ const MyList = () => {
                             <div key={movie.watchlist_id || movie.id} style={{ position: 'relative' }}>
                                 <img
                                     onClick={() => navigate(`/browse/${movie.id}`)}
-                                    src={movie.poster && movie.poster.startsWith('http') ? movie.poster : `http://localhost:5000${movie.poster}`}
+                                    src={movie.poster && movie.poster.startsWith('http') ? movie.poster : `${API_BASE_URL}${movie.poster}`}
                                     alt={movie.title}
                                     style={{
                                         width: '200px',

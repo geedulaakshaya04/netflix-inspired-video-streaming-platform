@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
-
+import { API_BASE_URL } from '../config';
 const Row = ({ title, fetchUrl, isLargeRow = false }) => {
     const [movies, setMovies] = useState([]);
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Row = ({ title, fetchUrl, isLargeRow = false }) => {
                             key={movie.id}
                             onClick={() => navigate(`/browse/${movie.id}`)}
                             className={`row-poster ${isLargeRow && "row-posterLarge"}`}
-                            src={movie.poster.startsWith('http') ? movie.poster : `http://localhost:5000${movie.poster}`}
+                            src={movie.poster.startsWith('http') ? movie.poster : `${API_BASE_URL}${movie.poster}`}
                             alt={movie.title}
                             style={{
                                 objectFit: 'cover', // cover looks better

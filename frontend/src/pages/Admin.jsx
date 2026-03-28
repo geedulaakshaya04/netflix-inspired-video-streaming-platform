@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { getMovies, addMovie, deleteMovie } from '../services/api';
+import { API_BASE_URL } from '../config';
 
 const Admin = () => {
     const [title, setTitle] = useState('');
@@ -125,7 +126,7 @@ const Admin = () => {
                                 background: '#222', padding: '15px', borderRadius: '4px'
                             }}>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                    {movie.poster && <img src={movie.poster.startsWith('http') ? movie.poster : `http://localhost:5000${movie.poster}`} alt={movie.title} style={{ width: '40px', height: '60px', objectFit: 'cover' }} />}
+                                    {movie.poster && <img src={movie.poster.startsWith('http') ? movie.poster : `${API_BASE_URL}${movie.poster}`} alt={movie.title} style={{ width: '40px', height: '60px', objectFit: 'cover' }} />}
                                     <div>
                                         <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{movie.title}</div>
                                         <div style={{ color: '#999', fontSize: '0.9rem' }}>{movie.category} • {movie.release_year}</div>

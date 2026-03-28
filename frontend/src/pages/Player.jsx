@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieById } from '../services/api';
+import { API_BASE_URL } from '../config';
 
 const Player = () => {
     const { id } = useParams();
@@ -21,7 +22,7 @@ const Player = () => {
 
     if (!movie) return <div style={{ backgroundColor: 'black', height: '100vh', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
 
-    const videoSrc = movie.video_url && movie.video_url.startsWith('http') ? movie.video_url : `http://localhost:5000${movie.video_url}`;
+    const videoSrc = movie.video_url && movie.video_url.startsWith('http') ? movie.video_url : `${API_BASE_URL}${movie.video_url}`;
 
     return (
         <div style={{ position: 'relative', width: '100vw', height: '100vh', backgroundColor: 'black', overflow: 'hidden' }}>
